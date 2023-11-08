@@ -1,4 +1,4 @@
-package com.natife.testtask.ui.theme
+package com.natife.testtask.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

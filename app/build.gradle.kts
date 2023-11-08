@@ -57,7 +57,9 @@ dependencies {
     val coroutines_version = "1.7.2"
     val lifecycle_version = "2.6.2"
     val retrofit_version = "2.9.0"
-    val mavericks_version = "3.0.7"
+    val coil_version = "2.4.0"
+    //Don't change room version // Lead to incompability problems with ksp
+    val room_version = "2.5.2"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -67,15 +69,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
     //Compose navigation
-    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
     //Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
@@ -86,16 +81,19 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6")
-    //Mavericks
-    implementation("com.airbnb.android:mavericks-compose:$mavericks_version")
-    implementation("com.airbnb.android:mavericks-hilt:$mavericks_version")
     //Di
     implementation("com.google.dagger:hilt-android:2.46.1")
     kapt("com.google.dagger:hilt-android-compiler:2.46.1")
-    //Room    Don't change room version // Lead to incompability problems with ksp
-    val room_version = "2.5.2"
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    //Room
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-    implementation ("com.google.code.gson:gson:2.10")
+    implementation("androidx.room:room-paging:$room_version")
+    implementation("com.google.code.gson:gson:2.10")
+    //Paging 3.0
+    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+    //Coil
+    implementation("io.coil-kt:coil-compose:$coil_version")
+    implementation("io.coil-kt:coil-gif:$coil_version")
 }
