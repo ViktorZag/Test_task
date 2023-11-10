@@ -5,9 +5,11 @@ import androidx.room.Room
 import com.natife.testtask.data.GifsRepository
 import com.natife.testtask.data.GifsRepositoryImpl
 import com.natife.testtask.data.local.AppDatabase
+import com.natife.testtask.data.local.DeletedGifsDao
 import com.natife.testtask.data.local.GifsDao
 import com.natife.testtask.data.local.KeysDao
 import com.natife.testtask.data.remote.GiphyApi
+import com.natife.testtask.util.Constants.DATABASE_NAME
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -83,7 +85,6 @@ object RemoteDataModule {
 @Module
 @InstallIn(SingletonComponent::class)
 object LocalDataModule {
-    const val DATABASE_NAME = "local.db"
 
     @Singleton
     @Provides
@@ -95,7 +96,10 @@ object LocalDataModule {
 
     @Provides
     fun provideGifsDao(database: AppDatabase): GifsDao = database.gifsDao
+
     @Provides
     fun provideKeysDao(database: AppDatabase): KeysDao = database.keysDao
 
+    @Provides
+    fun provideDeletedGifsDao(database: AppDatabase): DeletedGifsDao = database.deletedGifsDao
 }

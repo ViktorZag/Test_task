@@ -5,19 +5,24 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.natife.testtask.data.GifsRepository
-import com.natife.testtask.data.local.model.GifEntity
+import com.natife.testtask.presentation.models.GifCardItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class UiState(
+    val searchQuery: String = "",
+    val isDeletingAllowed: Boolean = false
+)
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -25,25 +30,34 @@ class GifsViewModel @Inject constructor(
     private val repository: GifsRepository
 ) : ViewModel() {
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery
-        get() = _searchQuery.asStateFlow()
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState
+        get() = _uiState.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val gifsFlow: StateFlow<PagingData<GifEntity>> = searchQuery
+    val gifsFlow: Flow<PagingData<GifCardItem>> = uiState
+        .distinctUntilChangedBy { it.searchQuery }
         .debounce(1500)
-        .flatMapLatest { query ->
-            if (query.isBlank()) {
+        .flatMapLatest { uiState ->
+            if (uiState.searchQuery.isBlank()) {
+                _uiState.update { it.copy(isDeletingAllowed = true) }
                 repository.getTrendingGifs()
             } else {
-                repository.searchGifs(query.trim())
+                _uiState.update { it.copy(isDeletingAllowed = false) }
+                repository.searchGifs(uiState.searchQuery.trim())
             }
         }
         .cachedIn(viewModelScope)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), PagingData.empty())
 
     fun updateQuery(query: String) {
-        _searchQuery.update { query }
+        _uiState.update { it.copy(searchQuery = query) }
     }
+
+    fun deleteGif(gifCardItem: GifCardItem) {
+        viewModelScope.launch {
+            repository.deleteGif(gifCardItem)
+        }
+    }
+
 
 }

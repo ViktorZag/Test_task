@@ -10,6 +10,7 @@ data class GifEntity(
     val id: String,
     val title: String,
     val fixedHeightUrl: String,
+    val fixedHeightAspectRatio:Float,
     val originalUrl: String,
     val slug:String
 )

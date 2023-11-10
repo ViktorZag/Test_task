@@ -8,33 +8,33 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import coil.ImageLoader
 import com.natife.testtask.presentation.screens.ListScreen
 import com.natife.testtask.presentation.screens.SingleGifScreen
 import com.natife.testtask.presentation.viewModels.GifsViewModel
 
 @Composable
 fun SetNavGraph(
-    imageLoader: ImageLoader,
     navController: NavHostController = rememberNavController()
 ) {
 
-   val viewModel: GifsViewModel = hiltViewModel()
+    val viewModel: GifsViewModel = hiltViewModel()
     NavHost(
         navController = navController,
         startDestination = Destination.ListScreen.route
     ) {
         composable(Destination.ListScreen.route) {
             ListScreen(
-                viewModel= viewModel,
-                imageLoader = imageLoader,
+                gifsPagingItems = viewModel.gifsFlow,
+                uiStateFlow = viewModel.uiState,
                 onGifClick = { index ->
                     navController.currentBackStackEntry?.savedStateHandle?.set("index", index)
                     navController.navigate("${Destination.SingleGifScreen.route}/$index") {
                         launchSingleTop = true
                     }
                 },
-                initialPosition = it.savedStateHandle.getStateFlow("index", null)
+                initialPosition = it.savedStateHandle.getStateFlow("index",0),
+                updateQuery = viewModel::updateQuery,
+                onGifDelete = viewModel::deleteGif
             )
         }
         composable(
@@ -44,9 +44,8 @@ fun SetNavGraph(
             })
         ) {
             SingleGifScreen(
-                viewModel= viewModel,
-                imageLoader = imageLoader,
-                page = it.arguments!!.getInt(Destination.SingleGifScreen.argName),
+                gifsFlow = viewModel.gifsFlow,
+                page = it.arguments?.getInt(Destination.SingleGifScreen.argName) ?: 0,
                 onBackPress = { index ->
                     navController.popBackStack()
                     navController.currentBackStackEntry?.savedStateHandle?.set("index", index)

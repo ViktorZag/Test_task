@@ -14,7 +14,7 @@ class SearchPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GifEntity> {
         val currentPage = params.key ?: 1
         return try {
-            val response = api.getSearchGifs(query = query,limit = 20, offset = 20 * currentPage)
+            val response = api.getSearchGifs(query = query, limit = 20, offset = 20 * currentPage)
             val endOfPaginationReached = response.data.isEmpty()
             if (!endOfPaginationReached) {
                 LoadResult.Page(

@@ -19,4 +19,7 @@ interface GifsDao {
 
     @Query("DELETE FROM $GIFS_TABLE_NAME")
     suspend fun deleteAllGifs()
+
+    @Query("DELETE  FROM $GIFS_TABLE_NAME WHERE id =:id")
+    suspend fun deleteGif(id: String)
 }

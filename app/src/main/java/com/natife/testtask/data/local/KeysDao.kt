@@ -14,9 +14,12 @@ interface KeysDao {
     suspend fun getGifKeys(id: String): KeysEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAllGifKeys(remoteKeys: List<KeysEntity>)
+    suspend fun addAllGifKeys(keys: List<KeysEntity>)
 
     @Query("DELETE FROM $KEYS_TABLE_NAME")
     suspend fun deleteAllGifKeys()
+
+    @Query("DELETE  FROM $KEYS_TABLE_NAME WHERE id =:id")
+    suspend fun deleteGifKey(id: String)
 
 }
